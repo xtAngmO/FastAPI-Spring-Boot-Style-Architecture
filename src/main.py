@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from src.configs.config import get_settings
+from src.configs.database_config import MongoDB
 from src.controllers import auth_controller, user_controller
 from src.exceptions.base_error import BaseError
 from src.utils.banner import Banner
@@ -16,7 +17,9 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Banner().print_banner()
+    await MongoDB().ensure_collections()
     yield
+    await MongoDB().close_connection()
 
 
 app = FastAPI(

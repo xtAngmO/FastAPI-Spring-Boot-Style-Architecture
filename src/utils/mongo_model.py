@@ -5,6 +5,8 @@ import uuid
 
 from pydantic import BaseModel, Field
 
+from src.utils.mongo_field import CompoundIndex
+
 T = TypeVar("T", bound="MongoBaseModel")
 
 
@@ -22,6 +24,7 @@ class MongoBaseModel(BaseModel):
     updated_at: datetime = Field(alias="updated_at", default_factory=lambda: datetime.now(UTC))
 
     collection_name: ClassVar[str] = ""
+    compound_indexes: ClassVar[list[CompoundIndex]] = []
 
     model_config: ClassVar[dict[str, bool | dict[type[datetime], Callable[[datetime], str]]]] = {
         "populate_by_name": True,
@@ -30,6 +33,23 @@ class MongoBaseModel(BaseModel):
             datetime: lambda dt: dt.isoformat(),
         },
     }
+
+    @classmethod
+    def add_compound_index(
+        cls,
+        fields: list[str],
+        unique: bool = False,
+        sparse: bool = False,
+        partial: bool = False,
+    ) -> None:
+        cls.compound_indexes.append(
+            CompoundIndex(
+                fields=fields,
+                unique=unique,
+                sparse=sparse,
+                partial=partial,
+            ),
+        )
 
     def dict_for_db(self: Self) -> dict[str, Any]:
         data = self.model_dump(by_alias=True, exclude_unset=False)

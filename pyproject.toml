@@ -44,7 +44,7 @@ select = [
     "RUF",  # ruff-specific rules
     "COM",  # flake8-commas
 ]
-ignore = ["E501", "TRY003", "PLR2004", "B008", "ARG001", "I001", "TRY301"]
+ignore = ["E501", "TRY003", "PLR2004", "B008", "ARG001", "I001", "TRY301", "PLR0912", "PLR0915", "PLR0913"]
 fixable = ["ALL"]
 unfixable = []
 dummy-variable-rgx = "^(_+|dummy|unused)$"
